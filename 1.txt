@@ -1,0 +1,24 @@
+import pandas as pd
+import numpy as np
+data = pd.read_csv("enjoy_sport.csv")
+print(data)
+concept = np.array(data.iloc[:,0:-1])
+target = np.array(data.iloc[:,-1])
+print(concept)
+print(target)
+for i in  range(len(target)):
+    if target[i] == 'yes':
+        h = concept[i]
+        break
+        
+while i != len(target):
+    if target[i] == 'yes':
+        temp = concept[i]
+    for j in range(len(h)):
+        if h[j] == temp[j]:
+            pass
+        else:
+            h[j] = '?'
+    i+=1
+    
+print(h)

@@ -1,0 +1,40 @@
+import sklearn.datasets as ds
+import pandas as pd
+import numpy as np
+from sklearn import preprocessing, cross_validation, neighbors
+
+iris = ds.load_iris()
+df = pd.DataFrame(iris.data,columns = iris.feature_names)
+print(df)
+df['species'] = iris.target
+print(df)
+x = np.array(df.iloc[:,0:-1])
+y = np.array(df['species'])
+print(x)
+print(y)
+x_train,x_test,y_train,y_test = cross_validation.train_test_split(x,y,test_size = 0.2)
+clf = neighbors.KNeighborsClassifier()
+clf.fit(x_train,y_train)
+accuracy = clf.score(x_test,y_test)
+print("Accuracy = ",accuracy)
+
+#example_measures = np.array([[4.7,3.2,2,0.2],[5.1,2.4,4.3,0.3]])
+prediction = clf.predict(x_test)
+#print("Prediction = ",prediction)
+
+df_test = pd.DataFrame(x_test,columns = iris.feature_names)
+df_test['species'] = y_test
+df_test['prediction'] = prediction
+
+s = np.array(df_test['species'])
+p = np.array(df_test['prediction'])
+
+classified = list()
+for i in range(len(x_test)):
+    if s[i] == p[i]:
+        classified.append('correct')
+    else:
+        classified.append('wrong')
+
+df_test['classified'] = classified
+print(df_test)

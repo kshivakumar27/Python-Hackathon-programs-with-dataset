@@ -1,0 +1,70 @@
+#program 8a.
+
+import pandas as pd
+import numpy as np
+from bokeh.plotting import figure, show
+from bokeh.io import output_notebook; output_notebook()
+
+import mixem
+data = pd.read_csv("faithful.csv")
+fig = figure(title="Old Faithful Data", x_axis_label="Eruption duration (minutes)", y_axis_label="Waiting time (minutes)")
+fig.scatter(x=data.eruptions, y=data.waiting)
+show(fig)
+weights, distributions, ll = mixem.em(np.array(data), [
+    mixem.distribution.MultivariateNormalDistribution(np.array((2, 50)), np.identity(2)),
+    mixem.distribution.MultivariateNormalDistribution(np.array((4, 80)), np.identity(2)),
+])
+N = 100
+x = np.linspace(np.min(data.eruptions), np.max(data.eruptions), num=N)
+y = np.linspace(np.min(data.waiting), np.max(data.waiting), num=N)
+xx, yy = np.meshgrid(x, y, indexing="ij")
+
+# Convert meshgrid into a ((N*N), 2) array of coordinates
+xxyy = np.array([xx.flatten(), yy.flatten()]).T
+
+# Compute model probabilities
+p = mixem.probability(xxyy, weights, distributions).reshape((N, N))
+
+fig2 = figure(title="Fitted Old Faithful Data", x_axis_label="Eruption duration (minutes)", y_axis_label="Waiting time (minutes)")
+
+# Plot the grid of model probabilities -- attention: bokeh expects _transposed_ input matrix!
+fig2.image(image=[p.T], x=np.min(data.eruptions), y=np.min(data.waiting), dw=np.ptp(data.eruptions), dh=np.ptp(data.waiting), palette="Spectral11")
+
+# Plot data points
+fig2.scatter(x=data.eruptions, y=data.waiting, color="#000000")
+
+show(fig2);
+
+#program 8b.
+
+from sklearn.cluster import KMeans
+#from sklearn import metrics
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+data=pd.read_csv("faithful.csv")
+df1=pd.DataFrame(data)
+f1 = df1['eruptions'].values
+f2 = df1['waiting'].values
+X=np.matrix(list(zip(f1,f2)))
+plt.plot()
+plt.xlim([0, 5])
+plt.ylim([0, 100])
+plt.title('Dataset')
+plt.ylabel('speeding_feature')
+plt.xlabel('Distance_Feature')
+plt.scatter(f1,f2)
+plt.show()
+# create new plot and data
+plt.plot()
+colors = ['b', 'g', 'r']
+markers = ['o', 'v', 's']
+# KMeans algorithm
+#K = 3
+kmeans_model = KMeans(n_clusters=3).fit(X)
+plt.plot()
+for i, l in enumerate(kmeans_model.labels_):
+    plt.plot(f1[i], f2[i], color=colors[l], marker=markers[l],ls='None')
+    plt.xlim([0, 5])
+    plt.ylim([0, 100])
+plt.show()

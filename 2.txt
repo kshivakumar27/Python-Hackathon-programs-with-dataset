@@ -1,0 +1,42 @@
+import pandas as pd
+import numpy as np
+
+data = pd.read_csv("enjoy_sport.csv")
+concept = np.array(data.iloc[:,0:-1])
+target = np.array(data.iloc[:,-1])
+for z in range(len(target)):
+    if target[z] == 'yes':
+        sh = concept[z]
+        break
+
+gh = [['?' for i in range(len(sh))] for i in range(len(sh))]
+print(sh)
+print(gh)
+for j in range(len(target)):
+    if target[j] == 'yes':
+        temp = concept[j]
+        for k in range(len(sh)):
+            if sh[k] == temp[k]:
+                pass
+            else:
+                sh[k] = '?'
+                gh[k][k] = '?'
+                
+    if target[j] == 'no':
+        temp = concept[j]
+        for k in range(len(sh)):
+            if sh[k] == temp[k]:
+                pass
+            else:
+                gh[k][k] = sh[k]
+                
+print(sh)
+print(gh)
+lst = ['?' for i in range(len(sh))]
+index = [i for i,val in enumerate(gh) if val == lst]
+print(index)
+for y in index:
+    gh.remove(lst)
+    
+print('Specific hypothesis:',sh,sep = '\n')
+print('General hypothesis:',gh,sep = '\n')

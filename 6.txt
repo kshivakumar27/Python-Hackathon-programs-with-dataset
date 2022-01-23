@@ -1,0 +1,12 @@
+from sklearn import metrics
+from sklearn import datasets
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score
+dataset=datasets.load_iris()
+model=GaussianNB()
+model.fit(dataset.data,dataset.target)
+expected=dataset.target
+predicted=model.predict(dataset.data)
+print("Accuracy:",accuracy_score(expected,predicted))
+print("Classification Report:\n",metrics.classification_report(expected,predicted))
+print("Confusion Matrix:\n",metrics.confusion_matrix(expected,predicted))
